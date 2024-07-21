@@ -1,0 +1,23 @@
+
+https://leetcode.com/problems/number-of-bit-changes-to-make-two-integers-equal/
+
+class Solution {
+public:
+    int minChanges(int n, int k) {
+        int sum = 0;
+        int t = n^k;
+        int a,b;
+        
+        for(int i=31;i>=0;i--){
+            a = (t>>i)&1;//xor
+            b = (n>>i)&1;
+
+            if(a==1 && b==0)return -1;
+
+            if(a==1 && b==1)sum++;
+        }
+
+        return sum;
+        
+    }
+};
