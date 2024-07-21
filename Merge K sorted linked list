@@ -1,0 +1,39 @@
+class compare{
+    public:
+    bool operator()(ListNode* a,ListNode*b){
+        return a->val > b->val;
+    }
+};
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*, vector<ListNode*>, compare> pq;
+        for(int i=0;i<lists.size();i++){
+            ListNode* ele=lists[i];
+            if(ele!=NULL)
+            pq.push(ele);
+        }
+        ListNode* head=NULL;
+        ListNode* tail=NULL;
+        while(!pq.empty()){
+            ListNode* front=pq.top();
+            pq.pop();
+            if(head==NULL){
+                head=front;
+                tail=front;
+                if(tail->next!=NULL){
+                    pq.push(tail->next);
+                }
+            }
+            else{
+                tail->next=front;
+                tail=front;
+                if(tail->next!=NULL){
+                    pq.push(tail->next);
+                }
+                
+            }
+        }
+        return head;
+    }
+};
