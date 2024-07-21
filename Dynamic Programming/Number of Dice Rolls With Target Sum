@@ -1,0 +1,51 @@
+class Solution {
+public:
+long long int Mod=1000000007;
+    int solveUsingRec(int n,int k,int target){
+        if(target==0 && n==0){
+            return 1;
+        }
+        if(target==0 && n!=0){
+            return 0;
+        }
+        if(target!=0 && n==0){
+            return 0;
+        }
+        int ans=0;
+        for(int i=1;i<=k;i++){
+            ans=(ans%Mod)+(solveUsingRec(n-1,k,target-i)%Mod);
+        }
+        return ans;
+    }
+
+    int solveUsingMem(int n,int k,int target,vector<vector<int> >& dp){
+        if(target==0 && n==0){
+            return 1;
+        }
+        if(target==0 && n!=0){
+            return 0;
+        }
+        if(target!=0 && n==0){
+            return 0;
+        }
+        if(dp[n][target]!=-1){
+            return dp[n][target];
+        }
+        int ans=0;
+        for(int i=1;i<=k;i++){
+            int recAns=0;
+            if(target-i>=0){
+                recAns=(solveUsingMem(n-1,k,target-i,dp))%Mod;
+            }
+            ans=(ans%Mod+recAns%Mod)%Mod;
+        }
+        dp[n][target]=ans;
+        return dp[n][target];
+    }
+
+    int numRollsToTarget(int n, int k, int target) {
+        vector<vector<int> > dp(n+1,vector<int>(target+1,-1));
+        int ans=solveUsingMem(n,k,target,dp);
+        return ans;
+    }
+};

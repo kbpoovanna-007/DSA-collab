@@ -1,0 +1,119 @@
+class Solution {
+public:
+//solve using recusrion
+    int solveUsingRec(vector<int>& nums,int prev,int curr){
+        if(curr>=nums.size()){
+            return 0;
+        }
+        int include=0;
+        if(prev==-1 || nums[curr]>nums[prev]){
+            include=1+solveUsingRec(nums,curr,curr+1);
+        }
+        int exclude=0+solveUsingRec(nums,prev,curr+1);
+        int ans=max(include,exclude);
+        return ans;
+    }
+
+//solve using memoization
+    int solveUsingMem(vector<int>& nums,int prev,int curr,vector<vector<int>>& dp){
+        if(curr>=nums.size()){
+            return 0;
+        }
+        int include=0;
+        if(dp[curr][prev+1]!=-1){
+            return dp[curr][prev+1];
+        }
+        if(prev==-1 || nums[curr]>nums[prev]){
+            include=1+solveUsingMem(nums,curr,curr+1,dp);
+        }
+        int exclude=0+solveUsingMem(nums,prev,curr+1,dp);
+        dp[curr][prev+1]=max(include,exclude);
+        return dp[curr][prev+1];
+    }
+
+
+//solve using tabulation
+    int solveUsingTab(vector<int>& nums){
+        vector<vector<int>> dp(nums.size()+1,vector<int>(nums.size()+1,0));
+        int n=nums.size();
+        for(int i=n-1;i>=0;i--){
+            for(int j=i-1;j>=-1;j--){
+                    int include=0;
+                    if(j==-1 || nums[i]>nums[j]){
+                        include=1+dp[i+1][i+1];
+                    }
+                    int exclude=0+dp[i+1][j+1];
+                    dp[i][j+1]=max(include,exclude);
+            }
+        }
+        return dp[0][0];
+    }
+
+//solve using tabulation space optimisation
+int solveUsingTabulationSO(vector<int>& num ) {
+        int n = num.size();
+        //vector<vector<int> > dp(n+1, vector<int>(n+1, 0));
+        vector<int> currRow(n+1, 0);
+        vector<int> nextRow(n+1, 0);
+
+
+        for(int curr_index=n-1; curr_index>=0; curr_index--) {
+            for(int prev_index=curr_index-1; prev_index >= -1; prev_index--) {
+
+                int include = 0;
+                if(prev_index == -1 || num[curr_index] > num[prev_index] ) {
+                    include = 1 + nextRow[curr_index+1];
+                }
+                int exclude  = 0 + nextRow[prev_index+1];
+                currRow[prev_index+1] = max(include, exclude);
+            }
+            //shifting
+            nextRow = currRow;
+        }
+        return nextRow[0];
+    }
+
+
+//solve using binary search
+    int solveUsingBS(vector<int>& nums){
+        vector<int> ans;
+        ans.push_back(nums[0]);
+        for(int i=1;i<nums.size();i++){
+            if(nums[i]>ans.back()){
+                ans.push_back(nums[i]);
+            }
+            else{
+                //just badha number exist karta h
+                int index=lower_bound(ans.begin(),ans.end(),nums[i])-ans.begin();
+                ans[index]=nums[i];
+            }
+        }
+        return ans.size();
+    }
+
+    int lengthOfLIS(vector<int>& nums) {
+
+        int ans=solveUsingBS(nums);
+        return ans;
+
+        // int prev=-1;
+        // int curr=0;
+        // int ans=solveUsingTab(nums);
+        // return ans;
+
+        //Method-2 using memoization
+        // int prev=-1;
+        // int curr=0;
+        // vector<vector<int>> dp(nums.size()+1,vector<int>(nums.size()+1,-1));
+        // int ans=solveUsingMem(nums,prev,curr,dp);
+        // return ans;
+
+
+        //Method-1 using recursion
+
+        // int prev=-1;
+        // int curr=0;
+        // int ans=solveUsingRec(nums,prev,curr);
+        // return ans;
+    }
+};

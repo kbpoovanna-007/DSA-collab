@@ -1,0 +1,115 @@
+class Solution {
+public:
+
+    //method-1 solveUsingRecursion
+    bool solveUsingRecursion(vector<int>& nums,int index,int sum,int target){
+        if(index>=nums.size()){
+            return false;
+        }
+        if(sum>target){
+            return false;
+        }
+        if(sum==target){
+            return true;
+        }
+        bool include=solveUsingRecursion(nums,index+1,sum+nums[index],target);
+        bool exclude=solveUsingRecursion(nums,index+1,sum,target);
+        return include || exclude;
+    }
+
+    //solve using memoization top-down approach
+    bool solveUsingMem(vector<int>& nums,int index,int sum,int target,vector<vector<int> >& dp){
+        if(index>=nums.size()){
+            return false;
+        }
+        if(sum>target){
+            return false;
+        }
+        if(sum==target){
+            return true;
+        }
+        if(dp[index][sum]!=-1){
+            return dp[index][sum];
+        }
+        bool include=solveUsingMem(nums,index+1,sum+nums[index],target,dp);
+        bool exclude=solveUsingMem(nums,index+1,sum,target,dp);
+        return dp[index][sum]=include || exclude;
+    }
+
+    //solve using tabulation
+    bool solveUsingTab(vector<int>& nums,int target){
+        int n=nums.size();
+        vector<vector<int> > dp(n+2,vector<int>(target+1,0));
+        for(int row=0;row<=n;row++){
+            dp[row][target]=1;
+        }
+
+        //apply the for loops
+        //row represent the index and column represnt the sum
+        for(int i=n-1;i>=0;i--){
+            for(int j=target;j>=0;j--){
+                // this condition is apply because if we look dp[i+]][j+nums[i]] then this value j+nums[i] will be grater then the target so it will be out of reach
+                bool include=0;
+                if(j+nums[i]<=target){   
+                include=dp[i+1][j+nums[i]];
+                }
+                bool exclude=dp[i+1][j];
+                dp[i][j]=include || exclude;
+            }
+        } 
+        return dp[0][0];
+
+    }
+
+    //space optimisation
+     bool solveUsingTabSO(vector<int>& nums,int target){
+        int n=nums.size();
+        vector<int> curr(target+1,0);
+        vector<int> next(target+1,0);
+        curr[target]=1;
+        next[target]=1;
+        //apply the for loops
+        //row represent the index and column represnt the sum
+        for(int i=n-1;i>=0;i--){
+            for(int j=target;j>=0;j--){
+                // this condition is apply because if we look dp[i+]][j+nums[i]] then this value j+nums[i] will be grater then the target so it will be out of reach
+                bool include=0;
+                if(j+nums[i]<=target){   
+                include=next[j+nums[i]];
+                }
+                bool exclude=next[j];
+                curr[j]=include || exclude;
+            }
+            next=curr;
+        } 
+        return next[0];
+
+    }
+
+    bool canPartition(vector<int>& nums) {
+        int index=0;
+        int targetSum=0;
+        for(int i=0;i<nums.size();i++){
+            targetSum=targetSum+nums[i];
+        }
+        if(targetSum & 1){
+            return false;
+        }
+        int currSum=0;
+        int target=targetSum/2;
+        bool ans=solveUsingTabSO(nums,target);
+        return ans;
+
+        //method-3
+        // bool ans=solveUsingTab(nums,target);
+        // return ans;
+
+        //method-2
+        //vector<vector<int> > dp(nums.size()+1,vector<int>(target+1,-1));
+       // bool ans=solveUsingMem(nums,index,currSum,target,dp);
+
+        //method-1
+       // bool ans=solveUsingRecursion(nums,index,currSum,target);
+        return ans;
+    }
+};
