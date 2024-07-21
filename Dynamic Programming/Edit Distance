@@ -1,0 +1,138 @@
+class Solution {
+public:
+ 
+// Solve Using Recursion
+    int solve(string& a,string& b,int i,int j){
+        if(i>=a.length()){              //i apni string puri traverse kar chuka h
+            return b.length()-j;
+           
+        }
+        if(j>=b.length()){            // j apni puri string traverse kar chuka h
+           return a.length()-i;
+          
+        }
+        int ans=0;
+        if(a[i]==b[j]){
+            ans=0+solve(a,b,i+1,j+1);
+        }
+        else{
+            int option1=1+solve(a,b,i,j+1);     //insert
+            int option2=1+solve(a,b,i+1,j);     //delete
+            int option3=1+solve(a,b,i+1,j+1);  //replace
+            ans=min(option1,min(option2,option3));
+        }
+        return ans;
+    }
+
+
+//Solve using Memoization
+    int solveUsingMem(string& a,string& b,int i,int j,vector<vector<int>>& dp){
+            if(i>=a.length()){
+                return b.length()-j;
+            
+            }
+            if(j>=b.length()){
+            return a.length()-i;
+            
+            }
+            if(dp[i][j]!=-1){
+                return dp[i][j];
+            }
+            int ans=0;
+            if(a[i]==b[j]){
+                ans=0+solveUsingMem(a,b,i+1,j+1,dp);
+            }
+            else{
+                int option1=1+solveUsingMem(a,b,i,j+1,dp);     //insert
+                int option2=1+solveUsingMem(a,b,i+1,j,dp);     //delete
+                int option3=1+solveUsingMem(a,b,i+1,j+1,dp);  //replace
+                ans=min(option1,min(option2,option3));
+            }
+            dp[i][j]=ans;
+            return dp[i][j];
+        }
+
+
+//Solve Using Tabulation
+    int solveUsingTab(string& a, string& b){
+        vector<vector<int>> dp(a.length()+1,vector<int>(b.length()+1,-1));
+        //using base conditon 
+        for(int col=0;col<=b.length();col++){
+            dp[a.length()][col]=b.length()-col;
+        }
+        for(int row=0;row<=a.length();row++){
+            dp[row][b.length()]=a.length()-row;
+        }
+        for(int i=a.length()-1;i>=0;i--){
+            for(int j=b.length()-1;j>=0;j--){
+                int ans=0;
+                if(a[i]==b[j]){
+                    ans=0+dp[i+1][j+1];
+                }
+                else{
+                    int option1=1+dp[i][j+1];     //insert
+                    int option2=1+dp[i+1][j];     //delete
+                    int option3=1+dp[i+1][j+1];  //replace
+                    ans=min(option1,min(option2,option3));
+                }
+                dp[i][j]=ans;
+               
+            }
+        }
+        return dp[0][0];
+    }
+
+
+//Solve using space optimisation
+    int solveUsingTabSO(string& a, string& b){
+           // vector<vector<int>> dp(a.length()+1,vector<int>(b.length()+1,-1));
+            vector<int> next(a.length()+1,0);
+            vector<int> curr(a.length()+1,0);
+
+            //using base conditon 
+            // for(int col=0;col<=b.length();col++){
+            //     dp[a.length()][col]=b.length()-col;
+            // }
+            for(int row=0;row<=a.length();row++){
+                next[row]=a.length()-row;
+            }
+
+            for(int j=b.length()-1;j>=0;j--){
+                curr[a.length()]=b.length()-j;
+                for(int i=a.length()-1;i>=0;i--){
+                        int ans=0;
+                        if(a[i]==b[j]){
+                            ans=0+next[i+1];
+                        }
+                        else{
+                            int option1=1+next[i];     //insert
+                            int option2=1+curr[i+1];     //delete
+                            int option3=1+next[i+1];  //replace
+                            ans=min(option1,min(option2,option3));
+                        }
+                        curr[i]=ans;
+                    
+                    }
+                    next=curr;
+                }
+        return next[0];
+    }
+
+
+
+    int minDistance(string word1, string word2) {
+        //Method-3 Using tabulation
+        int i=0;
+        int j=0;
+        int ans=solveUsingTab(word1,word2);
+        return ans;
+
+        //Method-2 using memoization
+
+        // int i=0;
+        // int j=0;
+        // vector<vector<int>> dp(word1.length()+1,vector<int>(word2.length()+1,-1));
+        // int ans=solveUsingMem(word1,word2,i,j,dp);
+        // return ans;
+    }
+};
