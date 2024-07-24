@@ -1,0 +1,27 @@
+https://www.geeksforgeeks.org/problems/minimum-platforms-1587115620/1?page=1&company=Atlassian&sortBy=difficulty
+
+class Solution{
+    public:
+    //Function to find the minimum number of platforms required at the
+    //railway station such that no train waits.
+    int findPlatform(int arr[], int dep[], int n)
+    {
+    	vector<pair<int,int>>table;
+    	
+    	for(int i=0;i<n;i++){
+    	table.push_back(make_pair(arr[i],dep[i]));
+    	}
+    	
+    	sort(table.begin(), table.end());
+    	
+    	priority_queue<int, vector<int>, greater<int>>pq;
+    	
+    	for(pair<int,int> x:table){
+    	    pq.push(x.second);//the smallest values will come up
+    	    if(x.first>pq.top())pq.pop();
+    	}
+    	
+    	
+    	return pq.size();
+    }
+};
